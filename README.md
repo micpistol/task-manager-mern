@@ -131,11 +131,11 @@ npm test
 ## Deployment
 
 ### Frontend (Vercel)
-- Deployed at: [Your Vercel URL]
+- Deployed at: https://task-manager-mern-sable.vercel.app
 - Automatic deployment from GitHub main branch
 
 ### Backend (Render)
-- Deployed at: [Your Render URL]
+- Deployed at: https://task-manager-backend-z0fh.onrender.com/
 - Automatic deployment from GitHub main branch
 
 ### Database (MongoDB Atlas)
