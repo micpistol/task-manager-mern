@@ -40,14 +40,14 @@ This guide will help you deploy your Task Manager MERN application to the cloud.
    - **Start Command**: `npm start`
 
 3. **Set Environment Variables**
-   - `MONGODB_URI`: Your MongoDB Atlas connection string
-   - `JWT_SECRET`: A strong random string (generate one)
+   - `MONGODB_URI`: mongodb+srv://mpistorio_db_user:IFKufQGE6IAiMIrC@task-mern.3tc1t50.mongodb.net/?retryWrites=true&w=majority&appName=Task-MERN
+   - `JWT_SECRET`: 57c695ded81e69d76a1c8af0fe963af8c4405a0c55b8af954f389bc1f4a0629b876186294f0c301da85deaadef7dc7d4bccf0991b78282aa009252b96fe12381
    - `NODE_ENV`: `production`
 
 4. **Deploy**
    - Click "Create Web Service"
    - Wait for deployment to complete
-   - Note your backend URL (e.g., `https://your-app.onrender.com`)
+   - Note your backend URL (e.g., `https://task-manager-backend-z0fh.onrender.com`)
 
 ## Step 3: Deploy Frontend to Vercel
 
@@ -63,7 +63,7 @@ This guide will help you deploy your Task Manager MERN application to the cloud.
    - **Output Directory**: `build`
 
 3. **Set Environment Variables**
-   - `REACT_APP_API_URL`: Your Render backend URL (e.g., `https://your-app.onrender.com/api`)
+   - `REACT_APP_API_URL`: Your Render backend URL (e.g., `https://task-manager-backend-z0fh.onrender.comi`)
 
 4. **Deploy**
    - Click "Deploy"
@@ -78,11 +78,11 @@ Update your README.md with the deployment links:
 ## Deployment
 
 ### Frontend (Vercel)
-- Deployed at: https://your-app.vercel.app
+- Deployed at: https://task-manager-mern-sable.vercel.app
 - Automatic deployment from GitHub main branch
 
 ### Backend (Render)
-- Deployed at: https://your-app.onrender.com
+- Deployed at: https://task-manager-backend-z0fh.onrender.com/
 - Automatic deployment from GitHub main branch
 
 ### Database (MongoDB Atlas)

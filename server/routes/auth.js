@@ -1,7 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
+const { ObjectId } = require('mongodb');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -32,9 +33,10 @@ router.post('/register', [
     }
 
     const { username, email, password } = req.body;
+    const db = req.app.locals.db;
 
     // Check if user already exists
-    const existingUser = await User.findOne({
+    const existingUser = await db.collection('users').findOne({
       $or: [{ email }, { username }]
     });
 
@@ -44,18 +46,25 @@ router.post('/register', [
       });
     }
 
+    // Hash password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Create new user
-    const user = new User({
+    const newUser = {
       username,
       email,
-      password
-    });
+      password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
-    await user.save();
+    const result = await db.collection('users').insertOne(newUser);
+    const user = { ...newUser, _id: result.insertedId };
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id.toString() },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -91,22 +100,23 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
+    const db = req.app.locals.db;
 
     // Find user by email
-    const user = await User.findOne({ email });
+    const user = await db.collection('users').findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Check password
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id.toString() },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -129,11 +139,21 @@ router.post('/login', [
 // Get current user (protected route)
 router.get('/me', auth, async (req, res) => {
   try {
+    const db = req.app.locals.db;
+    const user = await db.collection('users').findOne(
+      { _id: new ObjectId(req.user.userId) },
+      { projection: { password: 0 } }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.json({
       user: {
-        id: req.user._id,
-        username: req.user.username,
-        email: req.user.email
+        id: user._id,
+        username: user.username,
+        email: user.email
       }
     });
   } catch (error) {

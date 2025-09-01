@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const Task = require('../models/Task');
+const { ObjectId } = require('mongodb');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -11,8 +11,11 @@ router.use(auth);
 // Get all tasks for current user
 router.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user._id })
-      .sort({ createdAt: -1 });
+    const db = req.app.locals.db;
+    const tasks = await db.collection('tasks')
+      .find({ user: new ObjectId(req.user.userId) })
+      .sort({ createdAt: -1 })
+      .toArray();
 
     res.json({
       tasks,
@@ -27,9 +30,10 @@ router.get('/', async (req, res) => {
 // Get single task by ID
 router.get('/:id', async (req, res) => {
   try {
-    const task = await Task.findOne({
-      _id: req.params.id,
-      user: req.user._id
+    const db = req.app.locals.db;
+    const task = await db.collection('tasks').findOne({
+      _id: new ObjectId(req.params.id),
+      user: new ObjectId(req.user.userId)
     });
 
     if (!task) {
@@ -39,7 +43,7 @@ router.get('/:id', async (req, res) => {
     res.json({ task });
   } catch (error) {
     console.error('Get task error:', error);
-    if (error.kind === 'ObjectId') {
+    if (error.message.includes('ObjectId')) {
       return res.status(400).json({ message: 'Invalid task ID' });
     }
     res.status(500).json({ message: 'Server error while fetching task' });
@@ -81,17 +85,22 @@ router.post('/', [
     }
 
     const { title, description, category, priority, dueDate } = req.body;
+    const db = req.app.locals.db;
 
-    const task = new Task({
+    const newTask = {
       title,
       description,
       category,
       priority,
       dueDate: dueDate ? new Date(dueDate) : null,
-      user: req.user._id
-    });
+      user: new ObjectId(req.user.userId),
+      completed: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
-    await task.save();
+    const result = await db.collection('tasks').insertOne(newTask);
+    const task = { ...newTask, _id: result.insertedId };
 
     res.status(201).json({
       message: 'Task created successfully',
@@ -142,9 +151,10 @@ router.put('/:id', [
       });
     }
 
-    const task = await Task.findOne({
-      _id: req.params.id,
-      user: req.user._id
+    const db = req.app.locals.db;
+    const task = await db.collection('tasks').findOne({
+      _id: new ObjectId(req.params.id),
+      user: new ObjectId(req.user.userId)
     });
 
     if (!task) {
@@ -153,22 +163,36 @@ router.put('/:id', [
 
     // Update fields
     const updateFields = ['title', 'description', 'category', 'priority', 'completed'];
+    const updateData = { updatedAt: new Date() };
+    
     updateFields.forEach(field => {
       if (req.body[field] !== undefined) {
-        task[field] = req.body[field];
+        updateData[field] = req.body[field];
       }
     });
 
     // Handle dueDate separately
     if (req.body.dueDate !== undefined) {
-      task.dueDate = req.body.dueDate ? new Date(req.body.dueDate) : null;
+      updateData.dueDate = req.body.dueDate ? new Date(req.body.dueDate) : null;
     }
 
-    await task.save();
+    const result = await db.collection('tasks').updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Get updated task
+    const updatedTask = await db.collection('tasks').findOne({
+      _id: new ObjectId(req.params.id)
+    });
 
     res.json({
       message: 'Task updated successfully',
-      task
+      task: updatedTask
     });
   } catch (error) {
     console.error('Update task error:', error);
@@ -182,19 +206,20 @@ router.put('/:id', [
 // Delete task
 router.delete('/:id', async (req, res) => {
   try {
-    const task = await Task.findOneAndDelete({
-      _id: req.params.id,
-      user: req.user._id
+    const db = req.app.locals.db;
+    const result = await db.collection('tasks').deleteOne({
+      _id: new ObjectId(req.params.id),
+      user: new ObjectId(req.user.userId)
     });
 
-    if (!task) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     console.error('Delete task error:', error);
-    if (error.kind === 'ObjectId') {
+    if (error.message.includes('ObjectId')) {
       return res.status(400).json({ message: 'Invalid task ID' });
     }
     res.status(500).json({ message: 'Server error while deleting task' });
@@ -204,25 +229,44 @@ router.delete('/:id', async (req, res) => {
 // Toggle task completion
 router.patch('/:id/toggle', async (req, res) => {
   try {
-    const task = await Task.findOne({
-      _id: req.params.id,
-      user: req.user._id
+    const db = req.app.locals.db;
+    const task = await db.collection('tasks').findOne({
+      _id: new ObjectId(req.params.id),
+      user: new ObjectId(req.user.userId)
     });
 
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
-    task.completed = !task.completed;
-    await task.save();
+    const newCompletedStatus = !task.completed;
+    
+    const result = await db.collection('tasks').updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { 
+        $set: { 
+          completed: newCompletedStatus,
+          updatedAt: new Date()
+        } 
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Get updated task
+    const updatedTask = await db.collection('tasks').findOne({
+      _id: new ObjectId(req.params.id)
+    });
 
     res.json({
-      message: `Task ${task.completed ? 'completed' : 'uncompleted'} successfully`,
-      task
+      message: `Task ${newCompletedStatus ? 'completed' : 'uncompleted'} successfully`,
+      task: updatedTask
     });
   } catch (error) {
     console.error('Toggle task error:', error);
-    if (error.kind === 'ObjectId') {
+    if (error.message.includes('ObjectId')) {
       return res.status(400).json({ message: 'Invalid task ID' });
     }
     res.status(500).json({ message: 'Server error while toggling task' });
