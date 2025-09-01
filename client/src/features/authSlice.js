@@ -9,7 +9,13 @@ export const register = createAsyncThunk(
       const response = await authService.register(userData);
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed');
+      const errorData = error.response?.data;
+      if (errorData?.errors && Array.isArray(errorData.errors)) {
+        // Format validation errors into a readable message
+        const errorMessages = errorData.errors.map(err => err.msg).join(', ');
+        return thunkAPI.rejectWithValue(errorMessages);
+      }
+      return thunkAPI.rejectWithValue(errorData?.message || 'Registration failed');
     }
   }
 );
