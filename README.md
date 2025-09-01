@@ -130,17 +130,35 @@ npm test
 
 ## Deployment
 
-### Frontend (Vercel)
-- Deployed at: https://task-manager-mern-sable.vercel.app
-- Automatic deployment from GitHub main branch
+### Live Application
+- **Frontend**: https://task-manager-mern-sable.vercel.app
+- **Backend**: https://task-manager-backend-z0fh.onrender.com
+- **Database**: MongoDB Atlas (cloud-hosted)
 
-### Backend (Render)
-- Deployed at: https://task-manager-backend-z0fh.onrender.com/
-- Automatic deployment from GitHub main branch
+### Deployment Platforms
+- **Frontend**: Vercel (automatic deployment from GitHub)
+- **Backend**: Render (automatic deployment from GitHub)
+- **Database**: MongoDB Atlas (cloud database)
 
-### Database (MongoDB Atlas)
-- Cloud-hosted MongoDB database
-- Secure connection with environment variables
+### Environment Variables (Production)
+The application uses the following environment variables in production:
+
+**Backend (Render)**:
+- `MONGODB_URI`: MongoDB Atlas connection string
+- `JWT_SECRET`: Strong JWT secret key
+- `NODE_ENV`: production
+- `PORT`: 10000 (Render default)
+
+**Frontend (Vercel)**:
+- `REACT_APP_API_URL`: Backend API URL
+
+### Security Features
+- ✅ HTTPS enabled on all services
+- ✅ JWT-based authentication
+- ✅ Password hashing with bcrypt
+- ✅ Environment variables for sensitive data
+- ✅ CORS properly configured
+- ✅ Input validation and sanitization
 
 ## Project Structure
 
