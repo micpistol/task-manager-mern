@@ -35,6 +35,10 @@ async function connectToMongoDB() {
     db = client.db("task-manager"); // Use your database name
     console.log("Successfully connected to MongoDB!");
     
+    // Make database available to routes AFTER connection is established
+    app.locals.db = db;
+    app.locals.client = client;
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -43,10 +47,6 @@ async function connectToMongoDB() {
     process.exit(1);
   }
 }
-
-// Make database available to routes
-app.locals.db = db;
-app.locals.client = client;
 
 // Middleware
 app.use(cors());
