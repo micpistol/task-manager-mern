@@ -41,7 +41,7 @@ This guide will help you deploy your Task Manager MERN application to the cloud.
 
 3. **Set Environment Variables**
    - `MONGODB_URI`: Your MongoDB Atlas connection string
-   - `JWT_SECRET`: a171903933c6b0e1e403976d4c7fd6c0cd6b59e3dbaaa82a2b2e3d4e25afdb8cf5636ae1c515e2e23a52515a354581a101d54825848216e8c9a70de1001acb35
+   - `JWT_SECRET`: Your strong JWT secret key
    - `NODE_ENV`: `production`
 
 4. **Deploy**
@@ -63,7 +63,7 @@ This guide will help you deploy your Task Manager MERN application to the cloud.
    - **Output Directory**: `build`
 
 3. **Set Environment Variables**
-   - `REACT_APP_API_URL`: Your Render backend URL (e.g., `https://task-manager-backend-z0fh.onrender.comi`)
+   - `REACT_APP_API_URL`: Your Render backend URL
 
 4. **Deploy**
    - Click "Deploy"
