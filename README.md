@@ -1,0 +1,178 @@
+# Task Manager - MERN Stack Application
+
+A full-stack task management application built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring user authentication, CRUD operations, and modern UI.
+
+## Features
+
+- ✅ User authentication (register/login/logout) with JWT
+- ✅ Create, read, update, and delete tasks
+- ✅ Task categories, priorities, and due dates
+- ✅ Protected routes for authenticated users
+- ✅ Redux Toolkit for state management
+- ✅ Responsive modern UI
+- ✅ Error handling and validation
+- ✅ API testing with Jest
+
+## Tech Stack
+
+### Backend
+- Node.js & Express.js
+- MongoDB & Mongoose
+- JWT Authentication
+- bcrypt for password hashing
+- Jest for testing
+
+### Frontend
+- React 18
+- Redux Toolkit
+- React Router
+- Axios for API calls
+- Tailwind CSS for styling
+
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB Atlas account
+- Git
+
+### Backend Setup
+
+1. Navigate to the server directory:
+```bash
+cd server
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Create a `.env` file in the server directory with your MongoDB connection string:
+```env
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_jwt_secret_key
+PORT=5000
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+The backend will run on `http://localhost:5000`
+
+### Frontend Setup
+
+1. Navigate to the client directory:
+```bash
+cd client
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+
+The frontend will run on `http://localhost:3000`
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user (protected)
+
+### Tasks
+- `GET /api/tasks` - Get all tasks for current user (protected)
+- `POST /api/tasks` - Create a new task (protected)
+- `PUT /api/tasks/:id` - Update a task (protected)
+- `DELETE /api/tasks/:id` - Delete a task (protected)
+
+## Database Models
+
+### User Schema
+```javascript
+{
+  username: String (required, unique),
+  email: String (required, unique),
+  password: String (required, hashed),
+  createdAt: Date
+}
+```
+
+### Task Schema
+```javascript
+{
+  title: String (required),
+  description: String,
+  category: String,
+  priority: String (low, medium, high),
+  dueDate: Date,
+  completed: Boolean (default: false),
+  user: ObjectId (ref: 'User', required),
+  createdAt: Date
+}
+```
+
+## Testing
+
+Run backend tests:
+```bash
+cd server
+npm test
+```
+
+## Deployment
+
+### Frontend (Vercel)
+- Deployed at: [Your Vercel URL]
+- Automatic deployment from GitHub main branch
+
+### Backend (Render)
+- Deployed at: [Your Render URL]
+- Automatic deployment from GitHub main branch
+
+### Database (MongoDB Atlas)
+- Cloud-hosted MongoDB database
+- Secure connection with environment variables
+
+## Project Structure
+
+```
+/
+├── client/                 # React frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── features/      # Redux slices
+│   │   ├── pages/         # Page components
+│   │   ├── services/      # API services
+│   │   └── App.js
+│   └── package.json
+├── server/                # Express backend
+│   ├── controllers/       # Route controllers
+│   ├── middleware/        # Custom middleware
+│   ├── models/           # Mongoose models
+│   ├── routes/           # API routes
+│   ├── tests/            # Test files
+│   └── server.js
+└── README.md
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
