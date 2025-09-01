@@ -40,8 +40,8 @@ This guide will help you deploy your Task Manager MERN application to the cloud.
    - **Start Command**: `npm start`
 
 3. **Set Environment Variables**
-   - `MONGODB_URI`: mongodb+srv://mpistorio_db_user:IFKufQGE6IAiMIrC@task-mern.3tc1t50.mongodb.net/?retryWrites=true&w=majority&appName=Task-MERN
-   - `JWT_SECRET`: 57c695ded81e69d76a1c8af0fe963af8c4405a0c55b8af954f389bc1f4a0629b876186294f0c301da85deaadef7dc7d4bccf0991b78282aa009252b96fe12381
+   - `MONGODB_URI`: Your MongoDB Atlas connection string
+   - `JWT_SECRET`: Your strong JWT secret key
    - `NODE_ENV`: `production`
 
 4. **Deploy**
