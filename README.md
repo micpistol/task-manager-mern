@@ -195,3 +195,4 @@ The application uses the following environment variables in production:
 
 This project is licensed under the MIT License.
 # Force redeploy
+# Force fresh deployment - Tue Sep  2 13:40:04 PDT 2025
