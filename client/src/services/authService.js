@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const API_URL = 'https://task-manager-backend-z0fh.onrender.com/api';
 
+// Debug: Log the API URL
+console.log('API URL:', API_URL);
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
