@@ -4,14 +4,14 @@ A full-stack task management application built with the MERN stack (MongoDB, Exp
 
 ## Features
 
-- ✅ User authentication (register/login/logout) with JWT
-- ✅ Create, read, update, and delete tasks
-- ✅ Task categories, priorities, and due dates
-- ✅ Protected routes for authenticated users
-- ✅ Redux Toolkit for state management
-- ✅ Responsive modern UI
-- ✅ Error handling and validation
-- ✅ API testing with Jest
+- User authentication (register/login/logout) with JWT
+- Create, read, update, and delete tasks
+-  Task categories, priorities, and due dates
+-  Protected routes for authenticated users
+-  Redux Toolkit for state management
+-  Responsive modern UI
+-  Error handling and validation
+-  API testing with Jest
 
 ## Tech Stack
 
@@ -153,12 +153,12 @@ The application uses the following environment variables in production:
 - `REACT_APP_API_URL`: Backend API URL
 
 ### Security Features
-- ✅ HTTPS enabled on all services
-- ✅ JWT-based authentication
-- ✅ Password hashing with bcrypt
-- ✅ Environment variables for sensitive data
-- ✅ CORS properly configured
-- ✅ Input validation and sanitization
+-  HTTPS enabled on all services
+-  JWT-based authentication
+-  Password hashing with bcrypt
+-  Environment variables for sensitive data
+-  CORS properly configured
+-  Input validation and sanitization
 
 ## Project Structure
 
